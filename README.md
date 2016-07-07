@@ -12,3 +12,7 @@ An App that reports the crime in Rockford, IL
 ----------------   
 **Time Spent : 4 Hours**  
 Key Learning : Learning the mapkit and its classes, in addition to querying JSON from and API
+
+JSON Map Sources:
+
+See https://dev.socrata.com/foundry/data.illinois.gov/ctfx-e3rj (Links to an external site.)
