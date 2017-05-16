@@ -19,7 +19,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var lblCrimeRange: UILabel!
-    @IBAction func DateSlider(sender: UISlider) {
+    @IBAction func DateSlider(_ sender: UISlider) {
 //2) Days Ago on Label from Slider
         //**Begin Copy**
         currentValue = Int(sender.value)
@@ -28,20 +28,20 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         
     }
     
-    @IBAction func DateSliderUp(sender: UISlider) {
+    @IBAction func DateSliderUp(_ sender: UISlider) {
 //3 Add Code to DateSliderUp determines how far back to get crime json and display on map
        //**Begin Copy**
         currentValue = Int(sender.value)
-        let now = NSDate()
+        let now = Date()
         mapView.removeAnnotations(mapView.annotations)
         var i = 1
         while i <= currentValue {
             
             let daysToAdd = i
-            let calculatedDate = NSCalendar.currentCalendar().dateByAddingUnit(NSCalendarUnit.Day, value: -daysToAdd, toDate: now, options: NSCalendarOptions.init(rawValue: 0))
-            let dateFormatter = NSDateFormatter()
+            let calculatedDate = (Calendar.current as NSCalendar).date(byAdding: NSCalendar.Unit.day, value: -daysToAdd, to: now, options: NSCalendar.Options.init(rawValue: 0))
+            let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd"
-            let newDates = dateFormatter.stringFromDate(calculatedDate!)
+            let newDates = dateFormatter.string(from: calculatedDate!)
             crimedate = newDates
             loadDataFromSODAApi()
             i = i + 1
@@ -52,8 +52,8 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     
 //4 Create Variables
     //**Begin Copy**
-    private var locationManager = CLLocationManager()
-    private var dataPoints:[DataPoints] = [DataPoints]()
+    fileprivate var locationManager = CLLocationManager()
+    fileprivate var dataPoints:[DataPoints] = [DataPoints]()
     var crimedate:String!
     var currentValue:Int!
     let startLocation = CLLocation(latitude: 42.306713, longitude: -88.989403	)
@@ -62,7 +62,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
 
 //5 Add func locationManager
     //**Begin Copy**
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         let location = locations.last! as CLLocation
         let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
@@ -77,12 +77,12 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         //**Begin Copy**
         
         //GET DATE
-        let now = NSDate()
-        let calculatedDate = NSCalendar.currentCalendar().dateByAddingUnit(NSCalendarUnit.Day, value: -1, toDate: now, options: NSCalendarOptions.init(rawValue: 0))
+        let now = Date()
+        let calculatedDate = (Calendar.current as NSCalendar).date(byAdding: NSCalendar.Unit.day, value: -1, to: now, options: NSCalendar.Options.init(rawValue: 0))
         //Formate Date
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        let newDates = dateFormatter.stringFromDate(calculatedDate!)
+        let newDates = dateFormatter.string(from: calculatedDate!)
         crimedate = newDates
         
         centerMapOnLocation(startLocation)
@@ -98,7 +98,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     
 //7 Add mapview function. Needed to update location when user moves
     //**Begin Copy**
-    func mapView(mapView: MKMapView, didUpdateUserLocation
+    func mapView(_ mapView: MKMapView, didUpdate
         userLocation: MKUserLocation) {
         mapView.centerCoordinate = userLocation.location!.coordinate
     }
@@ -107,7 +107,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
 //8 Add checkLocationAuthorizationStatus Confirm user gives access to location
     //**Begin Copy**
     func checkLocationAuthorizationStatus() {
-        if CLLocationManager.authorizationStatus() == .AuthorizedWhenInUse {
+        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
             mapView.showsUserLocation = true
         } else {
             locationManager.requestWhenInUseAuthorization()
@@ -117,7 +117,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     
 //9 Add centerMapOnLocation func
     //**Begin Copy**
-    func centerMapOnLocation(location:CLLocation){
+    func centerMapOnLocation(_ location:CLLocation){
         let coordinateRegion:MKCoordinateRegion! = MKCoordinateRegionMakeWithDistance(location.coordinate, initialRadius * 2.0, initialRadius * 2.0)
         mapView.setRegion(coordinateRegion, animated: true)
     }
@@ -126,8 +126,8 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
 //10 Add setUpNavigationBar Nav Bar Color
     //**Begin Copy**
     func setUpNavigationBar(){
-        self.navigationBar.barTintColor = UIColor.redColor()
-        self.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
+        self.navigationBar.barTintColor = UIColor.red
+        self.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
     }
     //**End Copy**
     
@@ -135,23 +135,30 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     
    //**Begin Copy**
     func loadDataFromSODAApi(){
-        let session:NSURLSession! = NSURLSession.sharedSession()
-        let url:NSURL! = NSURL(string: "https://data.illinois.gov/resource/ctfx-e3rj.json?occurred_on_date=\(crimedate)")
-        let task = session.dataTaskWithURL(url, completionHandler: {data, response, error in
+        let session:URLSession! = URLSession.shared
+        print(crimedate)
+        var strURL:String!
+        strURL = "https://data.illinois.gov/resource/ctfx-e3rj.json?occurred_on_date=\(crimedate!)"
+        //let url:URL = URL(string:"https://data.illinois.gov/resource/ctfx-e3rj.json?occurred_on_date=\(crimedate)")!
+        let url:URL = URL(string:strURL)!
+        
+        
+        let task = session.dataTask(with: url, completionHandler: {data, response, error in
             guard let actualData = data else{
                 return
             }
             do{
-                let jsonResult:NSArray = try NSJSONSerialization.JSONObjectWithData(actualData, options: NSJSONReadingOptions.MutableLeaves) as! NSArray
+                let jsonResult:NSArray = try JSONSerialization.jsonObject(with: actualData, options: JSONSerialization.ReadingOptions.mutableLeaves) as! NSArray
                 //  print("Number of Json Results loaded  = \(jsonResult.count)")
-                dispatch_async(dispatch_get_main_queue(), {
+                DispatchQueue.main.async(execute: {
                     for item in jsonResult {
                         let dataDictionary = item as! NSDictionary
-                        let datapoint:DataPoints! = DataPoints.fromDataArray(dataDictionary)
+                        let datapoint:DataPoints! = DataPoints.fromDataArray(dataDictionary)!
                         self.dataPoints.append(datapoint)
                         var thepoint = MKPointAnnotation()
                         thepoint = MKPointAnnotation()
                         thepoint.coordinate = datapoint.coordinate
+                        //thepoint.title = datapoint.title!
                         thepoint.title = datapoint.title
                         thepoint.subtitle = datapoint.district
                         self.mapView.addAnnotation(thepoint)

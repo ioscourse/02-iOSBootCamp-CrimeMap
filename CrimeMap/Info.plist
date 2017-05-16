@@ -36,5 +36,10 @@
 	</array>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>To spot the criminal activities in the area</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 </dict>
 </plist>
