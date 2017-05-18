@@ -14,8 +14,39 @@ import Foundation
 //1a) Add to right of UIViewController
 //    ,MKMapViewDelegate,CLLocationManagerDelegate
 
-class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegate {
 
+
+
+class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegate {
+    var gameTimer: Timer!
+    @IBAction func btnMe(_ sender: UIBarButtonItem) {
+        centermeonmap()
+    }
+    
+    @IBOutlet weak var lblcount: UILabel!
+    
+    func centermeonmap(){
+        
+       let userLocation = mapView.userLocation
+        
+                let region = MKCoordinateRegionMakeWithDistance(
+                    userLocation.location!.coordinate, 5000, 5000)
+        
+        mapView.setRegion(region, animated: true)
+        
+    }
+    
+    func centeronmap(){
+        
+        let userLocation = startLocation
+        
+        let region = MKCoordinateRegionMakeWithDistance(
+            userLocation.coordinate, 18000, 18000)
+        
+        mapView.setRegion(region, animated: true)
+
+    }
+    //let regionRadius: CLLocationDistance = 1000
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var lblCrimeRange: UILabel!
@@ -23,9 +54,17 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
 //2) Days Ago on Label from Slider
         //**Begin Copy**
         currentValue = Int(sender.value)
-        lblCrimeRange.text = "\(currentValue) Days Ago Until Now."
-        //**End Copy**
+        if (currentValue == 1){
+             lblCrimeRange.text = "\(currentValue!) Day Ago Until Now."
+        } else{
+              lblCrimeRange.text = "\(currentValue!) Days Ago Until Now."
+
+        }
         
+    }
+    
+    func UpdateCount(){
+        lblcount.text = "\(mapView.visibleAnnotations().count.description) visible crimes"
     }
     
     @IBAction func DateSliderUp(_ sender: UISlider) {
@@ -35,6 +74,8 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         let now = Date()
         mapView.removeAnnotations(mapView.annotations)
         var i = 1
+        
+
         while i <= currentValue {
             
             let daysToAdd = i
@@ -45,54 +86,61 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             crimedate = newDates
             loadDataFromSODAApi()
             i = i + 1
+            
         }
         //**End Copy**
-
+       
+        
     }
     
 //4 Create Variables
     //**Begin Copy**
-    fileprivate var locationManager = CLLocationManager()
-    fileprivate var dataPoints:[DataPoints] = [DataPoints]()
+    var intCount:Int! = 0
+    var dataPoints:[DataPoints] = [DataPoints]()
     var crimedate:String!
     var currentValue:Int!
-    let startLocation = CLLocation(latitude: 42.306713, longitude: -88.989403	)
+    let startLocation = CLLocation(latitude:  42.288880, longitude: -89.061026	)
     let initialRadius:CLLocationDistance = 20000
     //**End Copy**
 
 //5 Add func locationManager
     //**Begin Copy**
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let location = locations.last! as CLLocation
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        let location = locations.last as! CLLocation
         let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
         let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
         self.mapView.setRegion(region, animated: true)
     }
-    //**End Copy**
+    
+       //**End Copy**
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
 //6 When App loads get formatted date from slider
         //**Begin Copy**
-        
+        //mapView.delegate = self
         //GET DATE
         let now = Date()
-        let calculatedDate = (Calendar.current as NSCalendar).date(byAdding: NSCalendar.Unit.day, value: -1, to: now, options: NSCalendar.Options.init(rawValue: 0))
-        //Formate Date
+        let daysToAdd = 1
+        let calculatedDate = (Calendar.current as NSCalendar).date(byAdding: NSCalendar.Unit.day, value: -daysToAdd, to: now, options: NSCalendar.Options.init(rawValue: 0))
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let newDates = dateFormatter.string(from: calculatedDate!)
         crimedate = newDates
         
-        centerMapOnLocation(startLocation)
-        checkLocationAuthorizationStatus()
+        //centerMapOnLocation(startLocation)
+       // checkLocationAuthorizationStatus()
         mapView.delegate = self
         
-        loadDataFromSODAApi()
+      
         setUpNavigationBar()
         mapView.showsUserLocation = true
+        //centerMapOnLocation(location: locationManager.location!)
         
+        gameTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(centeronmap), userInfo: nil, repeats: false)
+        
+         gameTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(UpdateCount), userInfo: nil, repeats: true)
         //**End Copy**
     }
     
@@ -100,29 +148,11 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     //**Begin Copy**
     func mapView(_ mapView: MKMapView, didUpdate
         userLocation: MKUserLocation) {
-        mapView.centerCoordinate = userLocation.location!.coordinate
+        //mapView.centerCoordinate = userLocation.location!.coordinate
     }
     //**End Copy**
     
-//8 Add checkLocationAuthorizationStatus Confirm user gives access to location
-    //**Begin Copy**
-    func checkLocationAuthorizationStatus() {
-        if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
-            mapView.showsUserLocation = true
-        } else {
-            locationManager.requestWhenInUseAuthorization()
-        }
-    }
-    //**End Copy**
-    
-//9 Add centerMapOnLocation func
-    //**Begin Copy**
-    func centerMapOnLocation(_ location:CLLocation){
-        let coordinateRegion:MKCoordinateRegion! = MKCoordinateRegionMakeWithDistance(location.coordinate, initialRadius * 2.0, initialRadius * 2.0)
-        mapView.setRegion(coordinateRegion, animated: true)
-    }
-    //**End Copy**
-    
+
 //10 Add setUpNavigationBar Nav Bar Color
     //**Begin Copy**
     func setUpNavigationBar(){
@@ -141,7 +171,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         strURL = "https://data.illinois.gov/resource/ctfx-e3rj.json?occurred_on_date=\(crimedate!)"
         //let url:URL = URL(string:"https://data.illinois.gov/resource/ctfx-e3rj.json?occurred_on_date=\(crimedate)")!
         let url:URL = URL(string:strURL)!
-        
+       // intCount = 0
         
         let task = session.dataTask(with: url, completionHandler: {data, response, error in
             guard let actualData = data else{
@@ -152,6 +182,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                 //  print("Number of Json Results loaded  = \(jsonResult.count)")
                 DispatchQueue.main.async(execute: {
                     for item in jsonResult {
+                        self.intCount = self.intCount + 1
                         let dataDictionary = item as! NSDictionary
                         let datapoint:DataPoints! = DataPoints.fromDataArray(dataDictionary)!
                         self.dataPoints.append(datapoint)
@@ -159,9 +190,16 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                         thepoint = MKPointAnnotation()
                         thepoint.coordinate = datapoint.coordinate
                         //thepoint.title = datapoint.title!
-                        thepoint.title = datapoint.title
+                        let s1 : String =  (datapoint?.title)!
+                        let s2 = s1.replacingOccurrences(of: "Optional(", with: "")
+                        let s3 = s2.replacingOccurrences(of: "):", with: " ")
+                        let s4 = s3.replacingOccurrences(of: ")", with: "")
+                        let s5 = s4.replacingOccurrences(of: "\"", with: "")
+                        print(s5)
+                        thepoint.title = s5
                         thepoint.subtitle = datapoint.district
                         self.mapView.addAnnotation(thepoint)
+                        
                     }
                 })
                 
@@ -169,12 +207,19 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                 print("Response Status - \(parseError)")
             }
         })
+       // intCount = 0
         task.resume()
+        
     }
     //**End Copy**
     
     
     
+}
+extension MKMapView {
+    func visibleAnnotations() -> [MKAnnotation] {
+        return self.annotations(in: self.visibleMapRect).map { obj -> MKAnnotation in return obj as! MKAnnotation }
+    }
 }
 
 /*

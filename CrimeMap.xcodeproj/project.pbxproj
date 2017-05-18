@@ -99,6 +99,7 @@
 				TargetAttributes = {
 					36AF31811CFB51BA00FCE585 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = DQDSR75JMK;
 						LastSwiftMigration = 0830;
 					};
 				};
@@ -259,8 +260,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
+				DEVELOPMENT_TEAM = DQDSR75JMK;
 				INFOPLIST_FILE = CrimeMap/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.rockvalleycollege.CrimeMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -272,8 +274,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
+				DEVELOPMENT_TEAM = DQDSR75JMK;
 				INFOPLIST_FILE = CrimeMap/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = edu.rockvalleycollege.CrimeMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
