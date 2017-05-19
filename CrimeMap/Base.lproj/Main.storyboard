@@ -26,7 +26,14 @@
                                 <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                                 <items>
                                     <navigationItem title="Rockford Crime Map" id="pco-A0-fan">
+                                        <barButtonItem key="leftBarButtonItem" title="list" id="rk5-Wy-Ci0">
+                                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="btnList:" destination="BYZ-38-t0r" id="A0G-Zd-pqr"/>
+                                            </connections>
+                                        </barButtonItem>
                                         <barButtonItem key="rightBarButtonItem" title="Me" id="KaT-Sp-bbL">
+                                            <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <connections>
                                                 <action selector="btnMe:" destination="BYZ-38-t0r" id="3v5-zd-IVK"/>
                                             </connections>

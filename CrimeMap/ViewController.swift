@@ -23,6 +23,39 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         centermeonmap()
     }
     
+    
+    @IBAction func btnList(_ sender: Any) {
+        var strShow:String! = ""
+        var counts:[String:Int] = [:]
+        
+        for item in strCrimeType {
+            counts[item] = (counts[item] ?? 0) + 1
+        }
+        
+        let objNCountSorted = counts.sorted (by: {$0.value > $1.value})
+        
+        for (key, value) in objNCountSorted {
+            print("\(value): \(key) time(s)")
+            strShow = strShow.appending("\(key) (count: \(value))\n")
+        }
+        
+        let messageText = NSMutableAttributedString(
+            string: strShow,
+            attributes: [
+                NSParagraphStyleAttributeName: NSParagraphStyle(),
+                NSFontAttributeName: UIFont.systemFont(ofSize: 12.0)
+            ]
+        )
+        
+        let alert = UIAlertController(title: "Analytics", message: strShow, preferredStyle: UIAlertControllerStyle.actionSheet)
+        alert.setValue(messageText, forKey: "attributedMessage")
+        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+//        for item in strCrimeType {
+//            print(item)
+//        }
+    }
+    
     @IBOutlet weak var lblcount: UILabel!
     
     func centermeonmap(){
@@ -47,6 +80,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
 
     }
     //let regionRadius: CLLocationDistance = 1000
+    var strCrimeType = [String]()
     @IBOutlet weak var navigationBar: UINavigationBar!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var lblCrimeRange: UILabel!
@@ -84,6 +118,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             dateFormatter.dateFormat = "yyyy-MM-dd"
             let newDates = dateFormatter.string(from: calculatedDate!)
             crimedate = newDates
+            strCrimeType.removeAll()
             loadDataFromSODAApi()
             i = i + 1
             
@@ -179,7 +214,6 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             }
             do{
                 let jsonResult:NSArray = try JSONSerialization.jsonObject(with: actualData, options: JSONSerialization.ReadingOptions.mutableLeaves) as! NSArray
-                //  print("Number of Json Results loaded  = \(jsonResult.count)")
                 DispatchQueue.main.async(execute: {
                     for item in jsonResult {
                         self.intCount = self.intCount + 1
@@ -198,6 +232,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
                         print(s5)
                         thepoint.title = s5
                         thepoint.subtitle = datapoint.district
+                        self.strCrimeType.append(datapoint.district)
                         self.mapView.addAnnotation(thepoint)
                         
                     }
@@ -208,6 +243,7 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             }
         })
        // intCount = 0
+       
         task.resume()
         
     }
