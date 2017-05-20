@@ -2,8 +2,8 @@
 //  ViewController.swift
 //  CrimeMap
 //
-//  Created by Charles Konkol on 5/29/16.
-//  Copyright © 2016 Charles Konkol. All rights reserved.
+//  Created by Charles Konkol on 5/12/17.
+//  Copyright © 2017 Charles Konkol. All rights reserved.
 //
 
 import UIKit
@@ -13,18 +13,34 @@ import Foundation
 
 //1a) Add to right of UIViewController
 //    ,MKMapViewDelegate,CLLocationManagerDelegate
-
-
-
-
 class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelegate {
+    
+//2 Create Variables
+    //**Begin Copy**
+    var intCount:Int! = 0
+    var dataPoints:[DataPoints] = [DataPoints]()
+    var crimedate:String!
+    var currentValue:Int!
+    let startLocation = CLLocation(latitude:  42.288880, longitude: -89.061026	)
     var gameTimer: Timer!
+    var strCrimeType = [String]()
+    //**End Copy**
+    
+//3 Add Objects
+    @IBOutlet weak var lblcount: UILabel!
+    @IBOutlet weak var navigationBar: UINavigationBar!
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var lblCrimeRange: UILabel!
+    
     @IBAction func btnMe(_ sender: UIBarButtonItem) {
+    //**Begin Copy**
         centermeonmap()
+     //**End Copy**
     }
     
     
     @IBAction func btnList(_ sender: Any) {
+    //**Begin Copy**
         var strShow:String! = ""
         var counts:[String:Int] = [:]
         
@@ -51,65 +67,33 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         alert.setValue(messageText, forKey: "attributedMessage")
         alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
-//        for item in strCrimeType {
-//            print(item)
-//        }
+     //**End Copy**
     }
     
-    @IBOutlet weak var lblcount: UILabel!
     
-    func centermeonmap(){
-        
-       let userLocation = mapView.userLocation
-        
-                let region = MKCoordinateRegionMakeWithDistance(
-                    userLocation.location!.coordinate, 5000, 5000)
-        
-        mapView.setRegion(region, animated: true)
-        
-    }
-    
-    func centeronmap(){
-        
-        let userLocation = startLocation
-        
-        let region = MKCoordinateRegionMakeWithDistance(
-            userLocation.coordinate, 18000, 18000)
-        
-        mapView.setRegion(region, animated: true)
-
-    }
-    //let regionRadius: CLLocationDistance = 1000
-    var strCrimeType = [String]()
-    @IBOutlet weak var navigationBar: UINavigationBar!
-    @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var lblCrimeRange: UILabel!
     @IBAction func DateSlider(_ sender: UISlider) {
-//2) Days Ago on Label from Slider
-        //**Begin Copy**
+    //**Begin Copy**
+        //2) Days Ago on Label from Slider
         currentValue = Int(sender.value)
         if (currentValue == 1){
-             lblCrimeRange.text = "\(currentValue!) Day Ago Until Now."
+            lblCrimeRange.text = "\(currentValue!) Day Ago Until Now."
         } else{
-              lblCrimeRange.text = "\(currentValue!) Days Ago Until Now."
-
+            lblCrimeRange.text = "\(currentValue!) Days Ago Until Now."
+            
         }
-        
-    }
-    
-    func UpdateCount(){
-        lblcount.text = "\(mapView.visibleAnnotations().count.description) visible crimes"
+    //**End Copy**
     }
     
     @IBAction func DateSliderUp(_ sender: UISlider) {
-//3 Add Code to DateSliderUp determines how far back to get crime json and display on map
-       //**Begin Copy**
+    //**Begin Copy**
+        //3 Add Code to DateSliderUp determines how far back to get crime json and display on map
+        //**Begin Copy**
         currentValue = Int(sender.value)
         let now = Date()
         mapView.removeAnnotations(mapView.annotations)
         var i = 1
         
-
+        
         while i <= currentValue {
             
             let daysToAdd = i
@@ -124,36 +108,12 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
             
         }
         //**End Copy**
-       
-        
     }
-    
-//4 Create Variables
-    //**Begin Copy**
-    var intCount:Int! = 0
-    var dataPoints:[DataPoints] = [DataPoints]()
-    var crimedate:String!
-    var currentValue:Int!
-    let startLocation = CLLocation(latitude:  42.288880, longitude: -89.061026	)
-    let initialRadius:CLLocationDistance = 20000
-    //**End Copy**
 
-//5 Add func locationManager
-    //**Begin Copy**
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        let location = locations.last as! CLLocation
-        let center = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-        self.mapView.setRegion(region, animated: true)
-    }
-    
-       //**End Copy**
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-//6 When App loads get formatted date from slider
-        //**Begin Copy**
+    //**Begin Copy**
+        //6 When App loads get formatted date from slider
         //mapView.delegate = self
         //GET DATE
         let now = Date()
@@ -165,21 +125,54 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
         crimedate = newDates
         
         //centerMapOnLocation(startLocation)
-       // checkLocationAuthorizationStatus()
+        // checkLocationAuthorizationStatus()
         mapView.delegate = self
         
-      
+        
         setUpNavigationBar()
         mapView.showsUserLocation = true
         //centerMapOnLocation(location: locationManager.location!)
         
         gameTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(centeronmap), userInfo: nil, repeats: false)
         
-         gameTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(UpdateCount), userInfo: nil, repeats: true)
+        gameTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(UpdateCount), userInfo: nil, repeats: true)
         //**End Copy**
     }
+
+//4 Add Functions
+
+
+    //**Begin Copy**
+    func UpdateCount(){
+        lblcount.text = "\(mapView.visibleAnnotations().count.description) visible crimes"
+    }
+    //**End Copy**
     
-//7 Add mapview function. Needed to update location when user moves
+    //**Begin Copy**
+    func centermeonmap(){
+        let userLocation = mapView.userLocation
+        
+        let region = MKCoordinateRegionMakeWithDistance(
+            userLocation.location!.coordinate, 5000, 5000)
+        
+        mapView.setRegion(region, animated: true)
+        
+    }
+    //**End Copy**
+    
+    
+    //**Begin Copy**     
+    func centeronmap(){
+        let userLocation = startLocation
+        
+        let region = MKCoordinateRegionMakeWithDistance(
+            userLocation.coordinate, 18000, 18000)
+        
+        mapView.setRegion(region, animated: true)
+        
+    }
+    //**End Copy**
+    
     //**Begin Copy**
     func mapView(_ mapView: MKMapView, didUpdate
         userLocation: MKUserLocation) {
@@ -187,16 +180,13 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
     }
     //**End Copy**
     
-
-//10 Add setUpNavigationBar Nav Bar Color
     //**Begin Copy**
     func setUpNavigationBar(){
         self.navigationBar.barTintColor = UIColor.red
         self.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
     }
     //**End Copy**
-    
-//11 Add loadDataFromSODAApi
+
     
    //**Begin Copy**
     func loadDataFromSODAApi(){
@@ -245,13 +235,9 @@ class ViewController: UIViewController,MKMapViewDelegate,CLLocationManagerDelega
        // intCount = 0
        
         task.resume()
-        
     }
     //**End Copy**
-    
-    
-    
-}
+}  //5 Add extension MKMapView
 extension MKMapView {
     func visibleAnnotations() -> [MKAnnotation] {
         return self.annotations(in: self.visibleMapRect).map { obj -> MKAnnotation in return obj as! MKAnnotation }
@@ -265,8 +251,15 @@ extension MKMapView {
  1) Control + Click on info.plist, Open As Source Control
  2) Add Below 2 lines right above the <dict> tag
  
+ <key>NSAppTransportSecurity</key>
+	<dict>
+ <key>NSAllowsArbitraryLoads</key>
+ <true/>
+	</dict>
+ <key>NSLocationUsageDescription</key>
+ <string>This information is required to show your current location</string>
  <key>NSLocationWhenInUseUsageDescription</key>
- <string>To spot the criminal activities in the area</string>
+ <string>This information is required to show your current location</string>
  
  */
 
