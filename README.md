@@ -1,3 +1,11 @@
+# Week 2 iOSBootCamp
+
+# View
+http://ioscourse.co/CrimeMap/
+
+# Download Instructions 
+https://github.com/ioscourse/CrimeMap/raw/master/MapKit%20Tutorial.docx
+
 # RockfordCrimeMap
 An App that reports the crime in Rockford, IL  
 
