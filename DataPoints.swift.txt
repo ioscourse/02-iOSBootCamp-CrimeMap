@@ -3,7 +3,7 @@
 //  RockfordCrimeMap
 //
 //  Created by CHuck Konkol
-//
+//  May 2017
 
 
 import UIKit
@@ -32,7 +32,7 @@ class DataPoints: NSObject,MKAnnotation{
     
 //4 Add fromDataArray func
     //**Begin Copy**
-    class func fromDataArray(dataDictionary:NSDictionary!)->DataPoints?{
+    class func fromDataArray(_ dataDictionary:NSDictionary!)->DataPoints?{
         // var error: NSError?
         var latitude:Double = 0.0
         var longitude:Double = 0.0
@@ -42,12 +42,12 @@ class DataPoints: NSObject,MKAnnotation{
         ////
         
         
-        let location:NSDictionary! = dataDictionary.objectForKey("geom") as! NSDictionary!
+        let location:NSDictionary! = dataDictionary.object(forKey: "geom") as! NSDictionary!
         if location != nil{
-            let type:String! = location.objectForKey("type") as! String!
+            let type:String! = location.object(forKey: "type") as! String!
             if type == "Point"
             {
-                let coordinates:NSArray! = location.objectForKey("coordinates") as! NSArray
+                let coordinates:NSArray! = location.object(forKey: "coordinates") as! NSArray
                 latitude = Double(coordinates[1] as! NSNumber)
                 longitude = Double(coordinates[0] as! NSNumber)
             }
