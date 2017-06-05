@@ -1,8 +1,6 @@
 # Week 2 iOSBootCamp
 Rock Valley College
-
 Professor Chuck Konkol
-
 c.konkol@rockvalleycollege.edu
 
 # View
