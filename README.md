@@ -1,7 +1,7 @@
 # Week 2 iOSBootCamp
 Rock Valley College<br>
-Professor Chuck Konkol
-c.konkol@rockvalleycollege.edu
+Professor Chuck Konkol<br>
+c.konkol@rockvalleycollege.edu<br>
 
 # View
 http://ioscourse.co/CrimeMap/
