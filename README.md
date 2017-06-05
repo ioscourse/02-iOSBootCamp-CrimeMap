@@ -4,7 +4,7 @@ Professor Chuck Konkol<br>
 c.konkol@rockvalleycollege.edu<br>
 
 # View
-http://ioscourse.co/CrimeMap/
+http://ioscourse.co/02-iOSBootCamp-CrimeMap/
 
 # Download Instructions 
 https://github.com/ioscourse/CrimeMap/raw/master/MapKit%20Tutorial.docx
@@ -21,7 +21,6 @@ An App that reports the crime in Rockford, IL
 * Create icon @ https://makeappicon.com/
 
 ----------------   
-**Time Spent : 4 Hours**  
 Key Learning : Learning the mapkit and its classes, in addition to querying JSON from and API
 
 JSON Map Sources:
